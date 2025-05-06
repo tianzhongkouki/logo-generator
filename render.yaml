@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: logo-generator
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn logo_generator.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: logo_generator.settings
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ロゴジェネレーター</title>
+  <link href="https://fonts.googleapis.com/css2?family=A1+Mincho&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'A1 Mincho', serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .canvas-container {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      margin: auto;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    input, button {
+      margin: 5px;
+      padding: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ロゴジェネレーター</h1>
+
+  <!-- 入力欄 -->
+  <input id="mainChar" placeholder="例：チ" maxlength="1">
+  <input id="subtitle" placeholder="例：地球の運動について">
+  <br>
+
+  <!-- 2枚のキャンバスを重ねる -->
+  <div class="canvas-container">
+    <canvas id="backgroundCanvas" width="500" height="500"></canvas>
+    <canvas id="foregroundCanvas" width="500" height="500"></canvas>
+  </div>
+
+  <button onclick="generateLogo()">生成</button>
+  <button onclick="downloadImage()">ダウンロード</button>
+
+  <script>
+    function generateLogo() {
+      const mainChar = document.getElementById("mainChar").value;
+      const subtitle = document.getElementById("subtitle").value;
+
+      // 背面キャンバスにカタカナ描画
+      const bgCanvas = document.getElementById("backgroundCanvas");
+      const bgCtx = bgCanvas.getContext("2d");
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgCtx.font = "bold 450px serif";
+      bgCtx.fillStyle = "black";
+      bgCtx.textAlign = "center";
+      bgCtx.textBaseline = "middle";
+      bgCtx.fillText(mainChar, 250, 240);
+
+      // 前面キャンバスにテンプレート画像 + サブタイトル描画
+      const fgCanvas = document.getElementById("foregroundCanvas");
+      const fgCtx = fgCanvas.getContext("2d");
+      const img = new Image();
+      img.src = "/static/images/template.png"; // ← 透過PNG
+
+      img.onload = () => {
+        fgCtx.clearRect(0, 0, fgCanvas.width, fgCanvas.height);
+        fgCtx.drawImage(img, 0, 0, fgCanvas.width, fgCanvas.height);
+
+        // サブタイトル：半角スペース挿入
+        const spaced = subtitle.split('').join(' ');
+        const finalSubtitle = `─ ${spaced} ─`;
+
+        fgCtx.font = "28px 'A1 Mincho', serif";
+        fgCtx.fillStyle = "black";
+        fgCtx.textAlign = "center";
+        fgCtx.textBaseline = "top";
+        fgCtx.fillText(finalSubtitle, 250, 455);
+      };
+    }
+
+    function downloadImage() {
+      const bgCanvas = document.getElementById("backgroundCanvas");
+      const fgCanvas = document.getElementById("foregroundCanvas");
+
+      const mergedCanvas = document.createElement("canvas");
+      mergedCanvas.width = 500;
+      mergedCanvas.height = 500;
+      const ctx = mergedCanvas.getContext("2d");
+
+      ctx.drawImage(bgCanvas, 0, 0);
+      ctx.drawImage(fgCanvas, 0, 0);
+
+      const link = document.createElement("a");
+      link.download = "logo.png";
+      link.href = mergedCanvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
