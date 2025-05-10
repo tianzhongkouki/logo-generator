@@ -12,9 +12,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
-
+# 必ず最初に BASE_DIR を定義
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 強制的に .env を読み込む（←ここが重要）
+load_dotenv(dotenv_path=BASE_DIR / ".env", override=True)
+
+
+# デバッグ出力
+print("DEBUG =", os.environ.get("DJANGO_DEBUG"))
+print("ALLOWED_HOSTS =", os.environ.get("DJANGO_ALLOWED_HOSTS"))
 
 
 STATIC_URL = '/static/'
@@ -35,12 +44,13 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'insecure-default-key')
 
 # ALLOWED_HOSTS（本番では .onrender.com を指定）
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+#ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
+
 
 
 # Application definition
