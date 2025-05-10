@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -27,10 +28,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)i3$45^%!1mnckv!yzm&n351$_12g*r+8c!gpp7ct*wqabolq)'
+# DEBUGの切り替え（Renderでは環境変数でFalseに）
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+
+# SECRET_KEYの切り替え
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'insecure-default-key')
+
+# ALLOWED_HOSTS（本番では .onrender.com を指定）
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['.onrender.com']
 
